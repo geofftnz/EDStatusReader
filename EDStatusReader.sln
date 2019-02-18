@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2047
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDStatusReader", "EDStatusReader\EDStatusReader.csproj", "{5DAC7DC2-07E1-45FD-AD98-90774DED573C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDStatusReader.Test", "EDStatusReader.Test\EDStatusReader.Test.csproj", "{50D6D3DD-7CDB-435B-9344-2AB8E236B8DB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5DAC7DC2-07E1-45FD-AD98-90774DED573C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DAC7DC2-07E1-45FD-AD98-90774DED573C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DAC7DC2-07E1-45FD-AD98-90774DED573C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DAC7DC2-07E1-45FD-AD98-90774DED573C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50D6D3DD-7CDB-435B-9344-2AB8E236B8DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50D6D3DD-7CDB-435B-9344-2AB8E236B8DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50D6D3DD-7CDB-435B-9344-2AB8E236B8DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50D6D3DD-7CDB-435B-9344-2AB8E236B8DB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D372C287-FE63-4A19-BFF4-DF17AB799297}
+	EndGlobalSection
+EndGlobal
