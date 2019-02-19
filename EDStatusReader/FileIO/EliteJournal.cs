@@ -13,6 +13,8 @@ namespace EDStatusReader.FileIO
         public long FilePosition { get; private set; } = 0;
         public DateTime LastWriteTime { get; set; } = DateTime.UtcNow;
 
+        private StringBuilder lineBuilder = new StringBuilder(4096);
+
         public EliteJournal(string filename)
         {
             Filename = filename;
@@ -33,21 +35,23 @@ namespace EDStatusReader.FileIO
             {
                 fs.Seek(FilePosition, SeekOrigin.Begin);
 
-                var sb = new StringBuilder(4096);
+                
 
                 while (fs.CanRead)
                 {
                     int b = fs.ReadByte();
+                    if (b < 0)
+                        break;
                     FilePosition = fs.Position;
 
                     if (b == 10)
                     {
-                        yield return sb.ToString();
-                        sb.Clear();
+                        yield return lineBuilder.ToString();
+                        lineBuilder.Clear();
                     }
                     else if (b >= 32)
                     {
-                        sb.Append((char)b);
+                        lineBuilder.Append((char)b);
                     }
                 }
 

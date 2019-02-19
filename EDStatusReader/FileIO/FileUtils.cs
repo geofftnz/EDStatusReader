@@ -15,5 +15,10 @@ namespace EDStatusReader.FileIO
 
             return files.Select(x => JournalFileName.Parse(x, path)).Where(x => x != null);
         }
+
+        public static JournalFileName GetLatestJournalFilename(string path)
+        {
+            return FileUtils.GetJournalFilenames(path).OrderByDescending(x => x.StartDate).FirstOrDefault();
+        }
     }
 }

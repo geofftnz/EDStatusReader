@@ -30,6 +30,7 @@ namespace EDStatusReader
             Console.WriteLine($"Using journal file {journalFileName.Fullpath}");
 
             var journalFile = new EliteJournal(journalFileName.Fullpath);
+            int i = 0;
             
             while (true)
             {
@@ -38,7 +39,19 @@ namespace EDStatusReader
                     Console.WriteLine(journalFile.FilePosition.ToString() + " " + line);
                 }
 
-                Thread.Sleep(500);
+                i++;
+                if (i > 20)
+                {
+                    i = 0;
+                    var latestJournal = FileUtils.GetLatestJournalFilename(JournalPath);
+                    if (latestJournal.Fullpath != journalFileName.Fullpath)
+                    {
+                        journalFileName = latestJournal;
+                        journalFile = new EliteJournal(journalFileName.Fullpath);
+                    }
+                }
+
+                Thread.Sleep(250);
             }
         }
 
