@@ -38,5 +38,10 @@ namespace EDStatusReader.Elite
 
             public float Total => Main + Reservoir;
         }
+
+        public override string ToString()
+        {
+            return $"{Timestamp} {Flags} {Pips[0]}{Pips[1]}{Pips[2]} W:{FireGroup} G:{GuiFocus} C:{Cargo:0} F:{(Fuel?.Total ?? 0.0):0.000}t";
+        }
     }
 }

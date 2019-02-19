@@ -37,7 +37,7 @@ namespace EDStatusReader.Elite
         InFighter = 33554432,
         InSRV = 67108864,
         Analysis = 134217728,
-        F28 = 268435456,
+        NightVis = 268435456,
         F29 = 536870912,
         F30 = 1073741824
     }

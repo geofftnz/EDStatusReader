@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EDStatusReader.Elite
+namespace EDStatusReader.Elite.Journal
 {
     public class JournalHeader
     {
@@ -13,7 +13,5 @@ namespace EDStatusReader.Elite
         public DateTime Timestamp { get; set; }
         [JsonProperty(PropertyName = "event")]
         public string EventName { get; set; }
-
-
     }
 }

@@ -12,9 +12,13 @@ namespace EDStatusReader
         static void Main(string[] args)
         {
             //var app = new EliteStatusReader();
-            var app = new EliteJournalReader();
+            //var app = new EliteJournalReader();
+            //app.Run();
 
-            app.Run();
+            using (var app = new Ship.ShipStatusReader())
+            {
+                app.Run();
+            }
         }
     }
 }

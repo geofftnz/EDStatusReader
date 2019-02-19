@@ -7,27 +7,51 @@ using System.Threading.Tasks;
 
 namespace EDStatusReader.FileIO
 {
-    public class EliteJournal
+    public class EliteJournal : IDisposable
     {
         public string Filename { get; set; }
         public long FilePosition { get; private set; } = 0;
         public DateTime LastWriteTime { get; set; } = DateTime.UtcNow;
 
         private StringBuilder lineBuilder = new StringBuilder(4096);
+        private FileStream fs;
 
         public EliteJournal(string filename)
         {
             Filename = filename;
+
+            fs = File.Open(Filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         }
+
+        public IEnumerable<string> GetLines()
+        {
+            int b;
+
+            do
+            {
+                b = fs.ReadByte();
+                if (b == 10)
+                {
+                    yield return lineBuilder.ToString();
+                    lineBuilder.Clear();
+                }
+                else if (b >= 32)
+                {
+                    lineBuilder.Append((char)b);
+                }
+                FilePosition = fs.Position;
+            } while (b != -1);
+
+        }
+
 
         /// <summary>
         /// Get lines since last time
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<string> GetLines()
+        public IEnumerable<string> GetLines2()
         {
             var fi = new FileInfo(Filename);
-
             if (fi.LastWriteTimeUtc == LastWriteTime)
                 yield break;
 
@@ -35,7 +59,7 @@ namespace EDStatusReader.FileIO
             {
                 fs.Seek(FilePosition, SeekOrigin.Begin);
 
-                
+
 
                 while (fs.CanRead)
                 {
@@ -68,6 +92,11 @@ namespace EDStatusReader.FileIO
                 }*/
             }
 
+        }
+
+        public void Dispose()
+        {
+            fs?.Dispose();
         }
     }
 }
