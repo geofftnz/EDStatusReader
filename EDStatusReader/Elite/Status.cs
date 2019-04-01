@@ -41,7 +41,7 @@ namespace EDStatusReader.Elite
 
         public override string ToString()
         {
-            return $"{Timestamp} {Flags} {Pips[0]}{Pips[1]}{Pips[2]} W:{FireGroup} G:{GuiFocus} C:{Cargo:0} F:{(Fuel?.Total ?? 0.0):0.000}t";
+            return $"{Timestamp} {Flags} {Pips?[0] ?? 0}{Pips?[1] ?? 0}{Pips?[2]??0} W:{FireGroup} G:{GuiFocus} C:{Cargo:0} F:{(Fuel?.Total ?? 0.0):0.000}t";
         }
     }
 }

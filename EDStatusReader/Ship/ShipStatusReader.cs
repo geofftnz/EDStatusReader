@@ -43,14 +43,11 @@ namespace EDStatusReader.Ship
 
         public void Run()
         {
+            // TODO: exit condition
             while (true)
             {
                 InitJournalReader();
                 InitStatusReader();
-
-                var status = statusFile?.GetStatus()?.FirstOrDefault();
-                if (status != null)
-                    Console.WriteLine(status.ToString());
 
                 if (journalFile != null)
                 {
@@ -59,6 +56,13 @@ namespace EDStatusReader.Ship
                         Console.WriteLine(line);
                     }
                 }
+
+                var status = statusFile?.GetStatus()?.FirstOrDefault();
+                if (status != null)
+                    Console.WriteLine(status.ToString());
+
+
+                // TODO: update ship state
 
                 Thread.Sleep(100);
             }
