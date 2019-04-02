@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace EDStatusReader.Elite
 {
-    public class Status : IShipUpdater
+    public class Status : IShipUpdater, IEliteEventHeader
     {
         [JsonProperty(PropertyName = "timestamp")]
         public DateTime Timestamp { get; set; }
         [JsonProperty(PropertyName = "event")]
         public string EventName { get; set; }
+        public string _InputLine { get; set; }
 
         public StatusFlags Flags { get; set; }
 

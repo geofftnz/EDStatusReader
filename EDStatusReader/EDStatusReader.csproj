@@ -73,6 +73,7 @@
     <Compile Include="EliteJournalReader.cs" />
     <Compile Include="EliteStatusReader.cs" />
     <Compile Include="Elite\GuiElement.cs" />
+    <Compile Include="Elite\IEliteEventHeader.cs" />
     <Compile Include="Elite\IShipUpdater.cs" />
     <Compile Include="Elite\JournalParser.cs" />
     <Compile Include="Elite\Journal\ShipTargeted.cs" />

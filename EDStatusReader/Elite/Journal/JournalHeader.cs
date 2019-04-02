@@ -8,13 +8,17 @@ using System.Threading.Tasks;
 
 namespace EDStatusReader.Elite.Journal
 {
-    public abstract class JournalHeader : IShipUpdater
+    public class JournalHeader : IShipUpdater, IEliteEventHeader
     {
         [JsonProperty(PropertyName = "timestamp")]
         public DateTime Timestamp { get; set; }
         [JsonProperty(PropertyName = "event")]
         public string EventName { get; set; }
 
-        public abstract void Update(ShipStatus ship);
+        public string _InputLine { get; set; }
+
+        public virtual void Update(ShipStatus ship)
+        {
+        }
     }
 }
