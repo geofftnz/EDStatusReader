@@ -1,4 +1,7 @@
-﻿using EDStatusReader.FileIO;
+﻿using EDStatusReader.Elite;
+using EDStatusReader.Elite.Journal;
+using EDStatusReader.FileIO;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +17,8 @@ namespace EDStatusReader.Ship
         public string EliteSavePath { get; private set; }
         private EliteJournal journalFile;
         private EliteStatus statusFile;
+        private ShipStatus ship = new ShipStatus();
+        private JournalParser parser = new JournalParser();
 
         public ShipStatusReader()
         {
@@ -49,20 +54,25 @@ namespace EDStatusReader.Ship
                 InitJournalReader();
                 InitStatusReader();
 
-                if (journalFile != null)
-                {
-                    foreach (var line in journalFile.GetLines())
-                    {
-                        Console.WriteLine(line);
-                    }
-                }
-
+                var items = new List<IEliteEventHeader>();
                 var status = statusFile?.GetStatus()?.FirstOrDefault();
                 if (status != null)
-                    Console.WriteLine(status.ToString());
+                    items.Add(status);
 
+                if (journalFile != null)
+                    items.AddRange(journalFile.GetLines().Select(s => { var a = JsonConvert.DeserializeObject<JournalHeader>(s); a._InputLine = s; return a; }));
 
-                // TODO: update ship state
+                bool update = false;
+                foreach (var item in items.OrderBy(i => i.Timestamp))
+                {
+                    if (parser.Parse(item, ship))
+                        update = true;
+                }
+
+                if (update)
+                {
+                    // render
+                }
 
                 Thread.Sleep(100);
             }
