@@ -73,6 +73,7 @@
     <Compile Include="EliteJournalReader.cs" />
     <Compile Include="EliteStatusReader.cs" />
     <Compile Include="Elite\GuiElement.cs" />
+    <Compile Include="Elite\IShipUpdater.cs" />
     <Compile Include="Elite\JournalParser.cs" />
     <Compile Include="Elite\Journal\ShipTargeted.cs" />
     <Compile Include="Elite\Journal\Location.cs" />
@@ -92,6 +93,8 @@
     <Compile Include="FileIO\JournalFileName.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ship\FSDJumpType.cs" />
+    <Compile Include="Ship\FSDState.cs" />
     <Compile Include="Ship\ShipStatus.cs" />
     <Compile Include="Ship\ShipStatusReader.cs" />
   </ItemGroup>
