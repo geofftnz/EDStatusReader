@@ -69,7 +69,7 @@ namespace EDStatusReader.Ship
         // docking
         public string RequestedDockingStation { get; set; }
         public bool DockingRequested { get; set; }
-        public bool? DockingGranted { get; set; }
+        public bool? DockingGranted { get; set; } = null;
         public int LandingPad { get; set; }
         public string DockingDeniedReason { get; set; }
 
@@ -96,6 +96,85 @@ namespace EDStatusReader.Ship
 
         // GUI
         public GuiElement GuiFocus { get; set; }
+
+        private void T(int x, int y, string text, ConsoleColor fg = ConsoleColor.Gray, ConsoleColor bg = ConsoleColor.Black)
+        {
+            Console.SetCursorPosition(x, y);
+            Console.ForegroundColor = fg;
+            Console.BackgroundColor = bg;
+            Console.Write(text);
+        }
+
+        public void RenderToConsole()
+        {
+            int x = 0, y = 0;
+
+            ConsoleColor bg = ConsoleColor.Black;
+            Console.BackgroundColor = bg;
+            Console.Clear();
+
+            // Cargo/Fuel panel
+            // Cargo
+            T(x + 3, y++, "Cargo", CargoScoopDeployed ? ConsoleColor.White : ConsoleColor.DarkGray);
+            T(x + 4, y++, $"{Cargo:0000}", ConsoleColor.Green);
+            y++;
+            // Fuel
+            T(x + 4, y++, "Fuel", ConsoleColor.Gray);
+            T(x + 4, y++, $"{TotalFuelKg:0000}", ConsoleColor.Green);
+            T(x + 2, y++, "Scooping", FuelScoop ? ConsoleColor.Yellow : ConsoleColor.DarkGray);
+            T(x + 2, y++, "Low Fuel", FuelScoop ? ConsoleColor.Red : ConsoleColor.DarkGray);
+            y++;
+
+            // Docking panel
+            T(x + 3, y++, "DOCKING");
+            T(x + 2, y++, "Requested", DockingRequested ? ConsoleColor.Cyan : ConsoleColor.DarkGray);
+
+
+            if (DockingGranted.HasValue && !Docked)
+                T(x + 3, y, ((DockingGranted ?? false) || Docked) ? "Granted" : "Denied", ((DockingGranted ?? false) || Docked) ? ConsoleColor.Green : ConsoleColor.Red);
+            y++;
+            if (!(DockingGranted ?? true))
+                T(x + 1, y, DockingDeniedReason, ConsoleColor.Red);
+            y++;
+            T(x + 2, y++, "Docked", Docked ? ConsoleColor.Green : ConsoleColor.DarkGray);
+            T(x + 2, y++, $"Pad: {LandingPad}", ((DockingGranted ?? false) || Docked) ? ConsoleColor.Green : ConsoleColor.DarkGray);
+
+            x = 15;
+            y = 0;
+
+            // Nav / FSD
+            T(x, y++, $"Loc: {Location}");
+            T(x, y++, $"Tgt: {FSDTarget} ({FSDTargetStarClass})");
+            y++;
+            T(x, y++, "Interlocks:");
+            int y2 = y;
+            T(x, y++, "Masslock", MassLock ? ConsoleColor.Red : ConsoleColor.Green);
+            T(x, y++, "Hardpoints", HardPointsDeployed ? ConsoleColor.Red : ConsoleColor.Green);
+            T(x, y++, "CargoScoop", CargoScoopDeployed ? ConsoleColor.Red : ConsoleColor.Green);
+            T(x, y++, "LandingGear", LandingGearDeployed ? ConsoleColor.Red : ConsoleColor.Green);
+            T(x, y++, "Cooldown", FsdCooldown ? ConsoleColor.Red : ConsoleColor.Green);
+
+            y = y2;
+            x += 15;
+            T(x, y++, "JetBoost", FSDSupercharged ? ConsoleColor.Cyan : ConsoleColor.DarkGray);
+            T(x, y++, "Charging", FsdCharging ? ConsoleColor.Yellow : ConsoleColor.DarkGray);
+            T(x, y++, "Supercruise", Supercruise ? ConsoleColor.Yellow : ConsoleColor.DarkGray);
+            T(x, y++, "Hyperspace", InHyperspace ? ConsoleColor.Yellow : ConsoleColor.DarkGray);
+
+
+            x = 40;
+            y = 0;
+            // Target / weapons
+            if (TargetLocked)
+            {
+                T(x, y++, $"Target: {TargetName}");
+                T(x, y++, $"Scan: {TargetScanStage}");
+
+                T(x, y++, $"Wanted", TargetWanted.HasValue ? (TargetWanted.Value ? ConsoleColor.Red : ConsoleColor.Green) : ConsoleColor.DarkGray);
+            }
+
+
+        }
 
     }
 }

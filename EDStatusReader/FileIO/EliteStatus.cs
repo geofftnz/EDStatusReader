@@ -50,7 +50,9 @@ namespace EDStatusReader.FileIO
             var line = lineBuilder.ToString();
             if (line.EndsWith("}"))
             {
-                yield return JsonConvert.DeserializeObject<Status>(line);
+                var s = JsonConvert.DeserializeObject<Status>(line);
+                s._InputLine = line;
+                yield return s;
             }
         }
 

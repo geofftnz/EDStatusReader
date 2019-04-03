@@ -23,9 +23,13 @@ namespace EDStatusReader.Elite
 
         private void RegisterParsers()
         {
+            //RegisterParser<Status>();
+            Parsers.Add("Status", a => (IShipUpdater)a);
+
             RegisterParser<DockingDenied>();
             RegisterParser<DockingGranted>();
             RegisterParser<DockingRequested>();
+            RegisterParser<Docked>();
             RegisterParser<FSDJump>();
             RegisterParser<FSDTarget>();
             RegisterParser<Location>();
@@ -33,9 +37,11 @@ namespace EDStatusReader.Elite
             RegisterParser<StartJump>();
         }
 
-        private void RegisterParser<T>() where T : IShipUpdater
+        private void RegisterParser<T>() where T : IShipUpdater, new()
         {
-            Parsers.Add(typeof(T).GetType().Name, h => JsonConvert.DeserializeObject<T>(h._InputLine));
+            T a = new T();
+            string name = a.GetType().Name;
+            Parsers.Add(name, h => JsonConvert.DeserializeObject<T>(h._InputLine));
         }
 
         public bool Parse(IEliteEventHeader ev, ShipStatus ship)

@@ -76,6 +76,7 @@
     <Compile Include="Elite\IEliteEventHeader.cs" />
     <Compile Include="Elite\IShipUpdater.cs" />
     <Compile Include="Elite\JournalParser.cs" />
+    <Compile Include="Elite\Journal\Docked.cs" />
     <Compile Include="Elite\Journal\ShipTargeted.cs" />
     <Compile Include="Elite\Journal\Location.cs" />
     <Compile Include="Elite\Journal\DockingDenied.cs" />

@@ -71,7 +71,7 @@ namespace EDStatusReader.Ship
 
                 if (update)
                 {
-                    // render
+                    ship.RenderToConsole();
                 }
 
                 Thread.Sleep(100);

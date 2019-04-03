@@ -9,11 +9,11 @@ namespace EDStatusReader.Elite.Journal
 {
     public class FSDTarget : JournalHeader
     {
-        public string StarSystem { get; set; }
+        public string Name { get; set; }
 
         public override void Update(ShipStatus ship)
         {
-            ship.FSDTarget = StarSystem;        }
+            ship.FSDTarget = Name;        }
     }
 }
 
