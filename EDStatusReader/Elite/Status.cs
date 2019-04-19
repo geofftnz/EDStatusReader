@@ -24,7 +24,7 @@ namespace EDStatusReader.Elite
 
         public GuiElement GuiFocus { get; set; }
 
-        public FuelStore Fuel { get; set; }
+        public FuelStore Fuel { get; set; } = new FuelStore();
 
         public float Cargo { get; set; }
 

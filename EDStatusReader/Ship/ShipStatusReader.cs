@@ -55,15 +55,16 @@ namespace EDStatusReader.Ship
                 InitStatusReader();
 
                 var items = new List<IEliteEventHeader>();
-                var status = statusFile?.GetStatus()?.FirstOrDefault();
-                if (status != null)
-                    items.Add(status);
 
                 if (journalFile != null)
                     items.AddRange(journalFile.GetLines().Select(s => { var a = JsonConvert.DeserializeObject<JournalHeader>(s); a._InputLine = s; return a; }));
 
+                var status = statusFile?.GetStatus()?.FirstOrDefault();
+                if (status != null)
+                    items.Add(status);
+
                 bool update = false;
-                foreach (var item in items.OrderBy(i => i.Timestamp))
+                foreach (var item in items)
                 {
                     if (parser.Parse(item, ship))
                         update = true;

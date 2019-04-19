@@ -129,15 +129,30 @@ namespace EDStatusReader.Ship
             T(x + 3, y++, "DOCKING");
             T(x + 2, y++, "Requested", DockingRequested ? ConsoleColor.Cyan : ConsoleColor.DarkGray);
 
-
             if (DockingGranted.HasValue && !Docked)
                 T(x + 3, y, ((DockingGranted ?? false) || Docked) ? "Granted" : "Denied", ((DockingGranted ?? false) || Docked) ? ConsoleColor.Green : ConsoleColor.Red);
             y++;
-            if (!(DockingGranted ?? true))
+            if (!(DockingGranted ?? true) && !Docked)
                 T(x + 1, y, DockingDeniedReason, ConsoleColor.Red);
             y++;
             T(x + 2, y++, "Docked", Docked ? ConsoleColor.Green : ConsoleColor.DarkGray);
             T(x + 2, y++, $"Pad: {LandingPad}", ((DockingGranted ?? false) || Docked) ? ConsoleColor.Green : ConsoleColor.DarkGray);
+            y++;
+
+            // Misc panel
+            T(x + 2, y++, "  HEAT");
+            T(x + 2, y++, "OverHeat", OverHeating ? ConsoleColor.Red : ConsoleColor.DarkGray);
+            T(x + 2, y++, " Silent", SilentRunning ? ConsoleColor.Green : ConsoleColor.DarkGray);
+            y++;
+
+            // Misc panel
+            T(x + 2, y++, "  MISC");
+            T(x + 2, y++, " Lights", LightsOn ? ConsoleColor.Green : ConsoleColor.DarkGray);
+            T(x + 2, y++, "NightVis", NightVisionOn ? ConsoleColor.Green : ConsoleColor.DarkGray);
+            T(x + 2, y++, "  Wing", InWing ? ConsoleColor.Cyan : ConsoleColor.DarkGray);
+            y++;
+
+
 
             x = 15;
             y = 0;
@@ -162,16 +177,28 @@ namespace EDStatusReader.Ship
             T(x, y++, "Hyperspace", InHyperspace ? ConsoleColor.Yellow : ConsoleColor.DarkGray);
 
 
-            x = 40;
+            x = 44;
             y = 0;
-            // Target / weapons
+            // Target / weapons / combat
+            T(x, y++, "COMBAT MODE", (!AnalysisMode) ? ConsoleColor.Yellow : ConsoleColor.DarkGray);
+            T(x, y++, "!DANGER!", (IsInDanger) ? ConsoleColor.Red : ConsoleColor.DarkGray);
             if (TargetLocked)
             {
                 T(x, y++, $"Target: {TargetName}");
                 T(x, y++, $"Scan: {TargetScanStage}");
 
-                T(x, y++, $"Wanted", TargetWanted.HasValue ? (TargetWanted.Value ? ConsoleColor.Red : ConsoleColor.Green) : ConsoleColor.DarkGray);
+                T(x, y++, TargetWanted.HasValue ? (TargetWanted.Value ? "WANTED" : "Clean") : "Scanning...", TargetWanted.HasValue ? (TargetWanted.Value ? ConsoleColor.Red : ConsoleColor.Green) : ConsoleColor.DarkGray);
             }
+            else
+            {
+                T(x, y++, $"No Target");
+                y += 2;
+            }
+            y++;
+            T(x, y++, "Hardpoints", HardPointsDeployed ? ConsoleColor.Green : ConsoleColor.DarkGray);
+            T(x, y++, $"Firegroup {FireGroup}");
+            T(x, y++, "Interdiction", Interdiction ? ConsoleColor.Red : ConsoleColor.DarkGray);
+            T(x, y++, "ShieldsDown", (!ShieldsUp) ? ConsoleColor.Red : ConsoleColor.DarkGray);
 
 
         }
