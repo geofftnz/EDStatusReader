@@ -77,6 +77,8 @@
     <Compile Include="Elite\IShipUpdater.cs" />
     <Compile Include="Elite\JournalParser.cs" />
     <Compile Include="Elite\Journal\Docked.cs" />
+    <Compile Include="Elite\Journal\SupercruiseExit.cs" />
+    <Compile Include="Elite\Journal\JetConeBoost.cs" />
     <Compile Include="Elite\Journal\ShipTargeted.cs" />
     <Compile Include="Elite\Journal\Location.cs" />
     <Compile Include="Elite\Journal\DockingDenied.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="FileIO\EliteStatus.cs" />
     <Compile Include="FileIO\FileUtils.cs" />
     <Compile Include="FileIO\JournalFileName.cs" />
+    <Compile Include="Output\ControlPanel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ship\FSDJumpType.cs" />

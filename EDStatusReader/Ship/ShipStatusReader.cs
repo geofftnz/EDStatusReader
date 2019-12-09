@@ -1,6 +1,7 @@
 ﻿using EDStatusReader.Elite;
 using EDStatusReader.Elite.Journal;
 using EDStatusReader.FileIO;
+using EDStatusReader.Output;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace EDStatusReader.Ship
         private EliteStatus statusFile;
         private ShipStatus ship = new ShipStatus();
         private JournalParser parser = new JournalParser();
+        private ControlPanel controlPanel = new ControlPanel("COM6");
 
         public ShipStatusReader()
         {
@@ -54,6 +56,8 @@ namespace EDStatusReader.Ship
                 InitJournalReader();
                 InitStatusReader();
 
+                ship.JournalFileName = journalFile.Filename;
+
                 var items = new List<IEliteEventHeader>();
 
                 if (journalFile != null)
@@ -64,15 +68,28 @@ namespace EDStatusReader.Ship
                     items.Add(status);
 
                 bool update = false;
-                foreach (var item in items)
+                bool clear = true;
+                foreach (var item in items.OrderBy(i => i.Timestamp))
                 {
                     if (parser.Parse(item, ship))
+                    {
+
+                        if (!item.EventName.Equals("status", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            if (clear)
+                                ship.LastJournalLines.Clear();
+                            clear = false;
+                            ship.LastJournalLines.Add(item._InputLine);
+                        }
+
                         update = true;
+                    }
                 }
 
                 if (update)
                 {
                     ship.RenderToConsole();
+                    controlPanel.DebugWriteByte(ship.Debug1);
                 }
 
                 Thread.Sleep(100);
@@ -92,6 +109,7 @@ namespace EDStatusReader.Ship
                 {
                     journalFile?.Dispose();
                     statusFile?.Dispose();
+                    controlPanel.Dispose();
                 }
 
                 disposedValue = true;

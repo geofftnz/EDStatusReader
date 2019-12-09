@@ -16,6 +16,7 @@ namespace EDStatusReader.Elite.Journal
         public override void Update(ShipStatus ship)
         {
             ship.FSDJump = true;
+            ship.FsdCharging = false;
             if (JumpType.Equals("Hyperspace", StringComparison.InvariantCultureIgnoreCase))
             {
                 ship.FSDJumpType = FSDJumpType.Hyperspace;

@@ -35,6 +35,8 @@ namespace EDStatusReader.Elite
             RegisterParser<Location>();
             RegisterParser<ShipTargeted>();
             RegisterParser<StartJump>();
+            RegisterParser<JetConeBoost>();
+            RegisterParser<SupercruiseExit>();
         }
 
         private void RegisterParser<T>() where T : IShipUpdater, new()

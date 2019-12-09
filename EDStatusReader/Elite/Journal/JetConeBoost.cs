@@ -7,13 +7,14 @@ using EDStatusReader.Ship;
 
 namespace EDStatusReader.Elite.Journal
 {
-    public class FSDTarget : JournalHeader
+    public class JetConeBoost : JournalHeader
     {
-        public string Name { get; set; }
+        public float BoostValue { get; set; }
 
         public override void Update(ShipStatus ship)
         {
-            ship.FSDTarget = Name;
+            ship.FSDSupercharged = true;
+            ship.FSDSuperchargeAmount = BoostValue;
         }
     }
 }

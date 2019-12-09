@@ -52,6 +52,8 @@ namespace EDStatusReader.Ship
         public bool FSDJump { get; set; }
         public bool InHyperspace { get; set; }
 
+        public string JournalFileName { get; set; }
+        public List<string> LastJournalLines { get; private set; } = new List<string>();
 
         public SpaceType SpaceType
         {
@@ -93,6 +95,18 @@ namespace EDStatusReader.Ship
 
         // Cargo
         public int Cargo { get; set; }
+
+        // Debug output for testing control panel hardware
+        public byte Debug1 => (byte)(
+            ((MassLock ? 1 : 0)) |
+            ((FsdCooldown ? 1 : 0) << 1) |
+            ((HardPointsDeployed ? 1 : 0) << 2) |
+            ((CargoScoopDeployed ? 1 : 0) << 3) |
+            ((LandingGearDeployed ? 1 : 0) << 4) |
+            ((FsdCharging ? 1 : 0) << 5) |
+            ((Supercruise ? 1 : 0) << 6) |
+            ((InHyperspace ? 1 : 0) << 7));
+
 
         // GUI
         public GuiElement GuiFocus { get; set; }
@@ -200,8 +214,14 @@ namespace EDStatusReader.Ship
             T(x, y++, "Interdiction", Interdiction ? ConsoleColor.Red : ConsoleColor.DarkGray);
             T(x, y++, "ShieldsDown", (!ShieldsUp) ? ConsoleColor.Red : ConsoleColor.DarkGray);
 
+            T(x, y++, JournalFileName);
+
+            foreach (var line in LastJournalLines.Take(10).Select(s=>s.Substring(0,80)))
+                T(x, y++, line);
 
         }
+
+
 
     }
 }
