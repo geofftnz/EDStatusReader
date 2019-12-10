@@ -22,6 +22,11 @@ namespace EDStatusReader.Output
 
         }
 
+        public void SendCommand(PanelCommand command)
+        {
+            var bs = command.GetBuffer();
+            serialPort.Write(bs, 0, bs.Length);
+        }
         public void DebugWriteByte(byte b)
         {
             byte[] bs = new byte[1];

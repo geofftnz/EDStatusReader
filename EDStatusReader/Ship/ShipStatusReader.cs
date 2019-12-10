@@ -22,6 +22,8 @@ namespace EDStatusReader.Ship
         private JournalParser parser = new JournalParser();
         private ControlPanel controlPanel = new ControlPanel("COM6");
 
+        private uint shiftreg = 0x1;
+
         public ShipStatusReader()
         {
             EliteSavePath = Environment.ExpandEnvironmentVariables(@"%UserProfile%\Saved Games\Frontier Developments\Elite Dangerous");
@@ -86,11 +88,33 @@ namespace EDStatusReader.Ship
                     }
                 }
 
+                // DEBUG
+                /*
+                if (Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey();
+                    if (key.Key == ConsoleKey.LeftArrow)
+                        shiftreg >>= 1;
+                    if (key.Key == ConsoleKey.RightArrow)
+                        shiftreg <<= 1;
+
+                    if (shiftreg == 0)
+                        shiftreg = 1;
+
+                    update = true;
+                }*/
+
                 if (update)
                 {
                     ship.RenderToConsole();
-                    controlPanel.DebugWriteByte(ship.Debug1);
+                    
+                    controlPanel.SendCommand(new LCDLineCommand(0, $"@ {ship.Location}"));
+                    controlPanel.SendCommand(new LCDLineCommand(1, $"> {ship.FSDTarget} ({ship.FSDTargetStarClass})"));
+
+                    //controlPanel.SendCommand(new LCDLineCommand(3, $"{shiftreg:X8}"));
+                    controlPanel.SendCommand(new ShiftRegisterCommand(ship));
                 }
+
 
                 Thread.Sleep(100);
             }
