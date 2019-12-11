@@ -10,10 +10,12 @@ namespace EDStatusReader.Elite.Journal
     public class FSDTarget : JournalHeader
     {
         public string Name { get; set; }
+        public int RemainingJumpsInRoute { get; set; }
 
         public override void Update(ShipStatus ship)
         {
             ship.FSDTarget = Name;
+            ship.RemainingJumpsInRoute = RemainingJumpsInRoute;
         }
     }
 }

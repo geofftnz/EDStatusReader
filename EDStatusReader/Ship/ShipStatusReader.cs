@@ -109,10 +109,34 @@ namespace EDStatusReader.Ship
                     ship.RenderToConsole();
                     
                     controlPanel.SendCommand(new LCDLineCommand(0, $"@ {ship.Location}"));
-                    controlPanel.SendCommand(new LCDLineCommand(1, $"> {ship.FSDTarget} ({ship.FSDTargetStarClass})"));
 
-                    //controlPanel.SendCommand(new LCDLineCommand(3, $"{shiftreg:X8}"));
-                    controlPanel.SendCommand(new ShiftRegisterCommand(ship));
+                    controlPanel.SendCommand(new LCDLineCommand(1, $"{ship.RemainingJumpsInRoute}> {ship.FSDTarget} ({ship.FSDTargetStarClass})"));
+
+                    controlPanel.SendCommand(new LCDLineCommand(2, $"* {ship.TargetName}"));
+                    
+                    if (!ship.TargetLocked)
+                    {
+                        controlPanel.SendCommand(new LCDLineCommand(3, $"?"));
+                    }
+                    if (ship.TargetLocked && ship.TargetScanStage < 3)
+                    {
+                        string scantext = "***";
+                        controlPanel.SendCommand(new LCDLineCommand(3, $"! {ship.TargetName} {scantext.Substring(0,ship.TargetScanStage+1)}"));
+                    }
+                    if (ship.TargetLocked && ship.TargetScanStage == 3)
+                    {
+                        controlPanel.SendCommand(new LCDLineCommand(3, $"! {ship.TargetName} {((ship.TargetWanted ?? false) ? "W!":"C")}"));
+                    }
+
+
+                        //controlPanel.SendCommand(new LCDLineCommand(3, $"{shiftreg:X8}"));
+                        controlPanel.SendCommand(new ShiftRegisterCommand(ship));
+                    
+                    controlPanel.SendCommand(new LED7SegCommand(0, ship.Cargo));
+
+                    int tempFuel = ship.TotalFuelKg;
+                    while (tempFuel > 9999) tempFuel /= 10;
+                    controlPanel.SendCommand(new LED7SegCommand(1, tempFuel));
                 }
 
 

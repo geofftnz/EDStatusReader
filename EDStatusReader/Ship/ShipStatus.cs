@@ -79,6 +79,7 @@ namespace EDStatusReader.Ship
         public FSDJumpType FSDJumpType { get; set; }
         public string FSDTarget { get; set; }
         public string FSDTargetStarClass { get; set; }
+        public int RemainingJumpsInRoute { get; set; }
 
         // Target
         public bool TargetLocked { get; set; }
