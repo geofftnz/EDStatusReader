@@ -125,6 +125,7 @@ namespace EDStatusReader.Ship
 
 
                 Thread.Sleep(100);
+
             }
         }
 

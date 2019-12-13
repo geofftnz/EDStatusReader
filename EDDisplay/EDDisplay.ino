@@ -106,7 +106,7 @@ void setup()
   navLCD.backlight();
 
   // set up for serial
-  Serial.begin(9600);
+  Serial.begin(28800);
 }
 
 void loop()

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO.Ports;
-
+using System.Threading;
 
 namespace EDStatusReader.Output
 {
@@ -13,10 +13,11 @@ namespace EDStatusReader.Output
         public string PortName { get; private set; }
         private SerialPort serialPort;
 
-        public ControlPanel(string portName, int baud = 9600)
+        public ControlPanel(string portName, int baud = 28800)
         {
             PortName = portName;
             serialPort = new SerialPort(portName, baud, Parity.None, 8, StopBits.One);
+            serialPort.WriteBufferSize = 4;
 
             serialPort.Open();
 
@@ -26,6 +27,7 @@ namespace EDStatusReader.Output
         {
             var bs = command.GetBuffer();
             serialPort.Write(bs, 0, bs.Length);
+            Thread.Sleep(5);
         }
         public void DebugWriteByte(byte b)
         {
