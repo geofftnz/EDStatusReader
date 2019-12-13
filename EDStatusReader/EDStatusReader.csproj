@@ -88,6 +88,7 @@
     <Compile Include="Elite\Journal\FSDJump.cs" />
     <Compile Include="Elite\Journal\JournalHeader.cs" />
     <Compile Include="Elite\Journal\StartJump.cs" />
+    <Compile Include="Elite\Patches.cs" />
     <Compile Include="Elite\Pips.cs" />
     <Compile Include="Elite\Status.cs" />
     <Compile Include="Elite\StatusFlags.cs" />

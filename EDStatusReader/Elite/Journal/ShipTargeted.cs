@@ -16,10 +16,12 @@ namespace EDStatusReader.Elite.Journal
         public string PilotRank { get; set; }
         public string LegalStatus { get; set; }
 
+        public string ShipName => Patches.ShipName(Ship) ?? Ship_Localised ?? Ship;
+
         public override void Update(ShipStatus ship)
         {
             ship.TargetLocked = TargetLocked;
-            ship.TargetName = TargetLocked ? Ship_Localised : string.Empty;
+            ship.TargetName = TargetLocked ? ShipName : string.Empty;
             ship.TargetScanStage = TargetLocked ? ScanStage : 0;
             ship.TargetWanted = LegalStatus?.Equals("Wanted", StringComparison.InvariantCultureIgnoreCase) ?? false;
         }
