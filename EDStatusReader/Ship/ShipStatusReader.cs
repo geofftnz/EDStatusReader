@@ -88,22 +88,6 @@ namespace EDStatusReader.Ship
                     }
                 }
 
-                // DEBUG
-                /*
-                if (Console.KeyAvailable)
-                {
-                    var key = Console.ReadKey();
-                    if (key.Key == ConsoleKey.LeftArrow)
-                        shiftreg >>= 1;
-                    if (key.Key == ConsoleKey.RightArrow)
-                        shiftreg <<= 1;
-
-                    if (shiftreg == 0)
-                        shiftreg = 1;
-
-                    update = true;
-                }*/
-
                 if (update)
                 {
                     ship.RenderToConsole();
