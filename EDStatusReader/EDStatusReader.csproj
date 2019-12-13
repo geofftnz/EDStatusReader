@@ -76,6 +76,7 @@
     <Compile Include="Elite\IEliteEventHeader.cs" />
     <Compile Include="Elite\IShipUpdater.cs" />
     <Compile Include="Elite\JournalParser.cs" />
+    <Compile Include="Elite\Journal\Shutdown.cs" />
     <Compile Include="Elite\Journal\Docked.cs" />
     <Compile Include="Elite\Journal\SupercruiseExit.cs" />
     <Compile Include="Elite\Journal\JetConeBoost.cs" />
@@ -97,6 +98,8 @@
     <Compile Include="FileIO\FileUtils.cs" />
     <Compile Include="FileIO\JournalFileName.cs" />
     <Compile Include="Output\ControlPanel.cs" />
+    <Compile Include="Output\StartupCommand.cs" />
+    <Compile Include="Output\ShutdownCommand.cs" />
     <Compile Include="Output\LED7SegCommand.cs" />
     <Compile Include="Output\ShiftRegisterCommand.cs" />
     <Compile Include="Output\LCDLineCommand.cs" />

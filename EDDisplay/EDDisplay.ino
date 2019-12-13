@@ -65,6 +65,9 @@ unsigned char serialState = SS_WAITING;
 
 #define CMD_SHIFTREG 0x01
 
+#define CMD_STARTUP 0x0E
+#define CMD_SHUTDOWN 0x0F
+
 #define CMD_LCDCMASK  0xF0
 #define CMD_LCDDMASK  0x0F
 #define CMD_LCDLINE1 0x10
@@ -83,12 +86,14 @@ unsigned char serialState = SS_WAITING;
 unsigned char LED_Lookup[] = { 0xC0,0xF9,0xA4,0xB0,0x99,0x92,0x82,0xF8,0x80,0x90,0xff, 0x8C,0xBF,0xC6,0xA1,0x86,0xFF,0xbf };
 
 // state parameters
+int previousStandby = 0;
 int testSequence = 0;
 
 void setup()
 {
   // standby
   pinMode(PIN_STANDBY, INPUT_PULLUP);
+  previousStandby = digitalRead(PIN_STANDBY);
 
   // shift register setup
   pinMode(dataPin, OUTPUT);
@@ -122,7 +127,7 @@ void loop()
   case DISPLAY_INIT:
     testSequence = 0;
     displayInit();
-    nextState = DISPLAY_TEST;
+    nextState = DISPLAY_RUN;
     break;
 
   case DISPLAY_TEST:
@@ -130,14 +135,66 @@ void loop()
     break;
 
   case DISPLAY_RUN:
-    displayMain();
+    nextState = displayMain();
     break;
   }
+
   // override next state
-  if (!isStandbyOn())
-    nextState = DISPLAY_STANDBY;
+  //if (!isStandbyOn())
+    //nextState = DISPLAY_STANDBY;
 
   displayState = nextState;
+}
+
+int processCommands(){
+  int nextState = displayState;
+  
+  // process pending command
+  if (have_command)
+  {
+    // group comands
+    if ((serial_command & CMD_LCDCMASK) == CMD_LCDLINE1) {
+      // buffer overflow protection
+      if (serialBufferPos < BUFLEN) {
+        serialBuffer[serialBufferPos] = 0;
+      }
+      else {
+        serialBuffer[BUFLEN - 1] = 0;
+      }
+
+      unsigned char line = serial_command & CMD_LCDDMASK;
+      if (line >= 0 && line < 4) {
+        setLCDLine(&navLCD, line, serialBuffer);
+      }
+    }
+    else {
+      switch (serial_command) {
+        case CMD_SHUTDOWN:
+        setLCDLine(&navLCD, 0, "SHUTDOWN");
+        nextState = DISPLAY_STANDBY;
+        break;
+      case CMD_7SEG1:
+        if (serialBufferPos >= 4) {
+          for (int i = 0; i < 4; i++) {
+            LED7_cargo[i] = serialBuffer[i];
+          }
+        }
+        break;
+      case CMD_7SEG2:
+        if (serialBufferPos >= 4) {
+          for (int i = 0; i < 4; i++) {
+            LED7_fuel[i] = serialBuffer[i];
+          }
+        }
+        break;
+      case CMD_SHIFTREG:
+        shiftRegisterWrite(serialBuffer, serialBufferPos);
+      }
+    }
+    have_command = 0;
+  }
+
+  return nextState;
 }
 
 
@@ -224,7 +281,7 @@ int displayStandby()
   // turn off LCD backlights
   clearLCD(&navLCD);
   setLCDBacklight(&navLCD, LOW);
-  setLCDLine(&navLCD, 0, "EDDisplay Standby");
+  //setLCDLine(&navLCD, 0, "EDDisplay Standby");
 
   // turn off LEDs
   unsigned char data[] = { 0,0 };
@@ -235,8 +292,18 @@ int displayStandby()
   LED_Blank(LED7_fuel);
   refresh7Segments();
 
-  delay(500);
-  return isStandbyOn() ? DISPLAY_INIT : DISPLAY_STANDBY;
+  delay(20);
+  int nextState = displayState;
+
+  if (have_command == 1 && serial_command == CMD_STARTUP){
+    nextState = DISPLAY_INIT;
+    have_command = 0;
+  }
+
+  if (standbySwitchedOn())
+    nextState = DISPLAY_INIT;
+  
+  return nextState;
 }
 
 
@@ -245,9 +312,29 @@ void displayInit()
   setLCDBacklight(&navLCD, HIGH);
 }
 
-bool isStandbyOn()
+
+
+bool standbySwitchedOn()
 {
-  return digitalRead(PIN_STANDBY) == HIGH;
+  int current = digitalRead(PIN_STANDBY);
+  if (current != previousStandby){
+    previousStandby = current;
+
+    if (current == HIGH)
+      return true;
+  }
+  return false;
+}
+bool standbySwitchedOff()
+{
+  int current = digitalRead(PIN_STANDBY);
+  if (current != previousStandby){
+    previousStandby = current;
+
+    if (current == LOW)
+      return true;
+  }
+  return false;
 }
 
 int displayTest()
@@ -327,52 +414,12 @@ void refresh7Segments()
   }
 }
 
-void displayMain()
+int displayMain()
 {
-  unsigned char data[2];
-
-  // process pending command
-  if (have_command)
-  {
-    // group comands
-    if ((serial_command & CMD_LCDCMASK) == CMD_LCDLINE1) {
-      // buffer overflow protection
-      if (serialBufferPos < BUFLEN) {
-        serialBuffer[serialBufferPos] = 0;
-      }
-      else {
-        serialBuffer[BUFLEN - 1] = 0;
-      }
-
-      unsigned char line = serial_command & CMD_LCDDMASK;
-      if (line >= 0 && line < 4) {
-        setLCDLine(&navLCD, line, serialBuffer);
-      }
-    }
-    else {
-      switch (serial_command) {
-      case CMD_7SEG1:
-        if (serialBufferPos >= 4) {
-          for (int i = 0; i < 4; i++) {
-            LED7_cargo[i] = serialBuffer[i];
-          }
-        }
-        break;
-      case CMD_7SEG2:
-        if (serialBufferPos >= 4) {
-          for (int i = 0; i < 4; i++) {
-            LED7_fuel[i] = serialBuffer[i];
-          }
-        }
-        break;
-      case CMD_SHIFTREG:
-        shiftRegisterWrite(serialBuffer, serialBufferPos);
-      }
-    }
-    have_command = 0;
-  }
-
+  int nextState = processCommands();
   refresh7Segments();
+  
+  return standbySwitchedOff() ? DISPLAY_STANDBY : nextState;
 }
 
 void setLCDBacklight(LiquidCrystal_I2C* lcd, uint8_t value)

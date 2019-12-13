@@ -12,8 +12,11 @@ namespace EDStatusReader.Output
         public const byte CMD_END = 0xfe;
         
         public const byte CMD_SHIFTREG = 0x01;
-        
-        public const byte CMD_LCDLINE = 0x00;
+
+        public const byte CMD_STARTUP = 0x0E;
+        public const byte CMD_SHUTDOWN = 0x0F;
+
+        public const byte CMD_LCDLINE = 0x10;
         public const byte CMD_LCDCMASK = 0xF0;
         public const byte CMD_LCDDMASK = 0x0F;
         public const byte CMD_LCDLINE1 = 0x10;

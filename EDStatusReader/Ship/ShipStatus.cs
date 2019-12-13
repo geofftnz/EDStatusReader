@@ -52,6 +52,8 @@ namespace EDStatusReader.Ship
         public bool FSDJump { get; set; }
         public bool InHyperspace { get; set; }
 
+        public bool Shutdown { get; set; } = false;
+
         public string JournalFileName { get; set; }
         public List<string> LastJournalLines { get; private set; } = new List<string>();
 

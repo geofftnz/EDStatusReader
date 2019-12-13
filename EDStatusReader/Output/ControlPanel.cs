@@ -17,7 +17,8 @@ namespace EDStatusReader.Output
         {
             PortName = portName;
             serialPort = new SerialPort(portName, baud, Parity.None, 8, StopBits.One);
-            serialPort.WriteBufferSize = 4;
+            serialPort.WriteBufferSize = 8;
+            //Console.WriteLine(serialPort.WriteBufferSize);
 
             serialPort.Open();
 
@@ -27,7 +28,7 @@ namespace EDStatusReader.Output
         {
             var bs = command.GetBuffer();
             serialPort.Write(bs, 0, bs.Length);
-            Thread.Sleep(5);
+            Thread.Sleep(1);
         }
         public void DebugWriteByte(byte b)
         {
