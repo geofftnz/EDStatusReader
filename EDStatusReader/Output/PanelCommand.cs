@@ -29,6 +29,8 @@ namespace EDStatusReader.Output
         public const byte CMD_LCDLINE8 = 0x17;
         public const byte CMD_7SEG1 = 0x21;
         public const byte CMD_7SEG2 = 0x22;
+        public const byte CMD_7SEGINT1 = 0x23;
+        public const byte CMD_7SEGINT2 = 0x24;
 
         public const int MAX_COMMAND_DATA = 64;
 

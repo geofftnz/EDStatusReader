@@ -33,7 +33,9 @@ int displayState = DISPLAY_STANDBY;
 
 // 7 segment state
 int cargo_value = 158;
-int fuel_value = 8865;
+long fuel_value = -1;
+long fuel_value_target = -1;
+byte led7_update = 0;
 unsigned char LED7_cargo[] = { 10,10,10,10 };
 unsigned char LED7_fuel[] = { 10,10,10,10 };
 
@@ -81,6 +83,9 @@ unsigned char serialState = SS_WAITING;
 
 #define CMD_7SEG1 0x21
 #define CMD_7SEG2 0x22
+
+#define CMD_7SEGINT1 0x23
+#define CMD_7SEGINT2 0x24
 
 //                               0    1    2    3    4    5    6    7    8    9   bl   with dp
 unsigned char LED_Lookup[] = { 0xC0,0xF9,0xA4,0xB0,0x99,0x92,0x82,0xF8,0x80,0x90,0xff, 0x40,0x79,0x24,0x30,0x19,0x12,0x02,0x78,0x00,0x10,0x7f };
@@ -184,10 +189,20 @@ int processCommands(){
         }
         break;
       case CMD_7SEG2:
+        fuel_value_target = -1;
         if (serialBufferPos >= 4) {
           for (int i = 0; i < 4; i++) {
             LED7_fuel[i] = serialBuffer[i];
             if (LED7_fuel[i] >= 22) LED7_fuel[i] = 10; // blank out of range inputs
+          }
+        }
+        break;
+      case CMD_7SEGINT2:
+        fuel_value_target = 0;
+        if (serialBufferPos >= 4) {
+          for (int i = 0; i < 4; i++) {
+            fuel_value_target <<= 8;
+            fuel_value_target |= serialBuffer[i];
           }
         }
         break;
@@ -381,7 +396,8 @@ int displayTest()
   if (testSequence == 17)
   {
     LED_Blank(LED7_cargo);
-    LED_SetFromInt(LED7_fuel, 5678);
+    //LED_SetFromInt(LED7_fuel, 5678);
+    LED_FormatLong(LED7_fuel,9876);
     for (int i = 0; i < 100; i++) {
       refresh7Segments();
       delay(2);
@@ -405,6 +421,29 @@ int displayTest()
   return nextState;
 }
 
+void update7Segments()
+{
+  // if we're targetting a given (int32) value for the fuel display, move towards it.
+
+  if (led7_update == 0)
+  {
+    if (fuel_value_target >= 0 && fuel_value != fuel_value_target)
+    {
+      long diff = fuel_value_target - fuel_value;
+
+      fuel_value += diff >> 4;
+
+      if (fuel_value > fuel_value_target) fuel_value--;
+      else if (fuel_value < fuel_value_target) fuel_value++;
+
+      LED_FormatLong(LED7_fuel,fuel_value);
+    }
+
+    led7_update = 32; // delay for next time
+  }
+  led7_update--;
+}
+
 void refresh7Segments()
 {
   unsigned char i;
@@ -421,6 +460,8 @@ void refresh7Segments()
 int displayMain()
 {
   int nextState = processCommands();
+
+  update7Segments();
   refresh7Segments();
   
   return standbySwitchedOff() ? DISPLAY_STANDBY : nextState;
@@ -520,4 +561,35 @@ void LED_DisplayInt(int x, int digit_ofs)
 
     x /= 10;
   }
+}
+
+
+void LED_FormatLong(unsigned char* b, long value)
+{
+    // decimal point position (for thousands)
+    byte dp = 5;
+    if (value >= 1000L) dp = 3;
+    if (value >= 10000L) dp = 2;
+    if (value >= 100000L) dp = 1;
+    if (value >= 1000000L) dp = 0;
+
+    // keep in range
+    while (value > 9999L) 
+        value /= 10;
+
+    for (byte i = 0; i < 4; i++)
+    {
+        byte digit = value % 10;
+
+        // supress leading zeros
+        if (value == 0 && i > 0)
+            digit = 10;
+
+        b[i] = digit;
+
+        if (i == dp)
+            b[i] += 11;
+
+        value /= 10;
+    }
 }

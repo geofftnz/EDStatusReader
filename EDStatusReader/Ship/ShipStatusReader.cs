@@ -118,7 +118,7 @@ namespace EDStatusReader.Ship
                     controlPanel.SendCommand(new LED7SegCommand(0, ship.Cargo));
 
                     int tempFuel = ship.TotalFuelKg;
-                    controlPanel.SendCommand(new LED7SegCommand(1, tempFuel));
+                    controlPanel.SendCommand(new LED7SegIntCommand(1, tempFuel));
 
 
                     controlPanel.SendCommand(new LCDLineCommand(0, $"@ {ship.Location}"));

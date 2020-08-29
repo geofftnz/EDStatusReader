@@ -45,6 +45,5 @@ namespace EDStatusReader.Output
             }
             return b;
         }
-
     }
 }

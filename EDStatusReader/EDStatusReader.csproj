@@ -98,6 +98,7 @@
     <Compile Include="FileIO\FileUtils.cs" />
     <Compile Include="FileIO\JournalFileName.cs" />
     <Compile Include="Output\ControlPanel.cs" />
+    <Compile Include="Output\LED7SegIntCommand.cs" />
     <Compile Include="Output\StartupCommand.cs" />
     <Compile Include="Output\ShutdownCommand.cs" />
     <Compile Include="Output\LED7SegCommand.cs" />
