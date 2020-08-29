@@ -20,7 +20,7 @@ namespace EDStatusReader.Ship
         private EliteStatus statusFile;
         private ShipStatus ship = new ShipStatus();
         private JournalParser parser = new JournalParser();
-        private ControlPanel controlPanel = new ControlPanel("COM6");
+        private ControlPanel controlPanel = new ControlPanel("COM7");
 
         private uint shiftreg = 0x1;
 
@@ -93,9 +93,33 @@ namespace EDStatusReader.Ship
                     }
                 }
 
+
+                if (Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey();
+
+                    if (key.Key == ConsoleKey.Escape)
+                    {
+                        Thread.Sleep(100);
+                        controlPanel.SendCommand(new ShutdownCommand());
+                        Thread.Sleep(500);
+                        break;
+                    }
+                    if (key.Key == ConsoleKey.U)
+                    {
+                        update = true;
+                    }
+                }
+
                 if (update)
                 {
                     ship.RenderToConsole();
+
+                    controlPanel.SendCommand(new LED7SegCommand(0, ship.Cargo));
+
+                    int tempFuel = ship.TotalFuelKg;
+                    controlPanel.SendCommand(new LED7SegCommand(1, tempFuel));
+
 
                     controlPanel.SendCommand(new LCDLineCommand(0, $"@ {ship.Location}"));
 
@@ -119,25 +143,8 @@ namespace EDStatusReader.Ship
 
                     controlPanel.SendCommand(new ShiftRegisterCommand(ship));
 
-                    controlPanel.SendCommand(new LED7SegCommand(0, ship.Cargo));
-
-                    int tempFuel = ship.TotalFuelKg;
-                    while (tempFuel > 9999) tempFuel /= 10;
-                    controlPanel.SendCommand(new LED7SegCommand(1, tempFuel));
                 }
 
-                if (Console.KeyAvailable)
-                {
-                    var key = Console.ReadKey();
-
-                    if (key.Key == ConsoleKey.Escape)
-                    {
-                        Thread.Sleep(100);
-                        controlPanel.SendCommand(new ShutdownCommand());
-                        Thread.Sleep(100);
-                        break;
-                    }
-                }
 
 
                 Thread.Sleep(100);

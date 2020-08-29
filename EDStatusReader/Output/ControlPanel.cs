@@ -13,12 +13,14 @@ namespace EDStatusReader.Output
         public string PortName { get; private set; }
         private SerialPort serialPort;
 
-        public ControlPanel(string portName, int baud = 28800)
+        public ControlPanel(string portName, int baud = 9600)
         {
             PortName = portName;
             serialPort = new SerialPort(portName, baud, Parity.None, 8, StopBits.One);
-            serialPort.WriteBufferSize = 8;
+            //serialPort.WriteBufferSize = 16;
             //Console.WriteLine(serialPort.WriteBufferSize);
+
+            //serialPort.
 
             serialPort.Open();
 
@@ -28,7 +30,6 @@ namespace EDStatusReader.Output
         {
             var bs = command.GetBuffer();
             serialPort.Write(bs, 0, bs.Length);
-            Thread.Sleep(1);
         }
         public void DebugWriteByte(byte b)
         {

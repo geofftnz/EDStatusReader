@@ -17,6 +17,17 @@ namespace EDStatusReader.Output
         {
             var b = new byte[4];
 
+            // decimal point position (for thousands)
+            int dp = -1;
+            if (value >= 1000) dp = 3;
+            if (value >= 10000) dp = 2;
+            if (value >= 100000) dp = 1;
+            if (value >= 1000000) dp = 0;
+
+            // keep in range
+            while (value > 9999) 
+                value /= 10;
+
             for (int i = 0; i < 4; i++)
             {
                 int digit = value % 10;
@@ -26,10 +37,13 @@ namespace EDStatusReader.Output
                     digit = 10;
 
                 b[i] = (byte)(digit);
+
+                if (i == dp)
+                    b[i] += 11;
+
                 value /= 10;
             }
             return b;
-
         }
 
     }

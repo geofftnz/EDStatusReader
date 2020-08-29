@@ -82,8 +82,8 @@ unsigned char serialState = SS_WAITING;
 #define CMD_7SEG1 0x21
 #define CMD_7SEG2 0x22
 
-//                               0    1    2    3    4    5    6    7    8    9   bl
-unsigned char LED_Lookup[] = { 0xC0,0xF9,0xA4,0xB0,0x99,0x92,0x82,0xF8,0x80,0x90,0xff, 0x8C,0xBF,0xC6,0xA1,0x86,0xFF,0xbf };
+//                               0    1    2    3    4    5    6    7    8    9   bl   with dp
+unsigned char LED_Lookup[] = { 0xC0,0xF9,0xA4,0xB0,0x99,0x92,0x82,0xF8,0x80,0x90,0xff, 0x40,0x79,0x24,0x30,0x19,0x12,0x02,0x78,0x00,0x10,0x7f };
 
 // state parameters
 int previousStandby = 0;
@@ -110,8 +110,10 @@ void setup()
   navLCD.begin(20, 4);
   navLCD.backlight();
 
+  
+
   // set up for serial
-  Serial.begin(28800);
+  Serial.begin(9600,SERIAL_8N1);
 }
 
 void loop()
@@ -127,7 +129,7 @@ void loop()
   case DISPLAY_INIT:
     testSequence = 0;
     displayInit();
-    nextState = DISPLAY_RUN;
+    nextState = DISPLAY_TEST;
     break;
 
   case DISPLAY_TEST:
@@ -177,6 +179,7 @@ int processCommands(){
         if (serialBufferPos >= 4) {
           for (int i = 0; i < 4; i++) {
             LED7_cargo[i] = serialBuffer[i];
+            if (LED7_cargo[i] >= 22) LED7_cargo[i] = 10; // blank out of range inputs
           }
         }
         break;
@@ -184,6 +187,7 @@ int processCommands(){
         if (serialBufferPos >= 4) {
           for (int i = 0; i < 4; i++) {
             LED7_fuel[i] = serialBuffer[i];
+            if (LED7_fuel[i] >= 22) LED7_fuel[i] = 10; // blank out of range inputs
           }
         }
         break;
@@ -199,8 +203,8 @@ int processCommands(){
 
 
 void serialEvent() {
- 
-  while (Serial.available())
+  int charactersToConsume = 64; 
+  while (Serial.available() && charactersToConsume-- > 0 )
   {   
     int nextState = serialState;
     unsigned char c = (unsigned char)Serial.read();
@@ -406,9 +410,9 @@ void refresh7Segments()
   unsigned char i;
   for (i = 0; i < 4; i++)
   {
-    LED_Out(LED_Lookup[LED7_fuel[i] & 0x0f]);
+    LED_Out(LED_Lookup[LED7_fuel[i]]);
     LED_Out(1 << i);
-    LED_Out(LED_Lookup[LED7_cargo[i] & 0x0f]);
+    LED_Out(LED_Lookup[LED7_cargo[i]]);
     LED_Out(1 << i);
     LowPulse(PIN_LED_RCLK);
   }
